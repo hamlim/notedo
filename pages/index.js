@@ -138,6 +138,7 @@ export default function Notedo() {
         <Textarea
           value={state.value}
           onChange={(val) => dispatch({ type: 'change', value: val })}
+          minHeight="100vh"
         />
       </Box>
       <Box forwardedAs="pre">
