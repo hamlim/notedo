@@ -1,209 +1,152 @@
-import Head from 'next/head'
+import * as React from 'react'
+import {
+  Box,
+  Textarea,
+  Text,
+  HiddenCheckbox,
+  Label,
+} from '@matthamlin/component-library'
 
-export default function Home() {
+let { useState, Fragment, useReducer } = React
+
+function ControlledCheckbox({ label, checked, onChange }) {
   return (
-    <div className="container">
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <Label display="inline-flex">
+      <HiddenCheckbox checked={checked} onChange={onChange} />
+      {label}
+    </Label>
+  )
+}
 
-      <main>
-        <h1 className="title">
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+// minimal
+// [] todo item
+// [x] todo item
+// classic
+// [ ] todo item
+// [X] todo item
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+function isLineMinimalEmptyCheckbox(line) {
+  return line.trim().startsWith('[]')
+}
 
-        <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+function isLineClassicEmptyCheckbox(line) {
+  return line.trim().startsWith('[ ]')
+}
 
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
+function isLineEmptyCheckbox(line) {
+  return isLineMinimalEmptyCheckbox(line) || isLineClassicEmptyCheckbox(line)
+}
 
-          <a
-            href="https://github.com/zeit/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
+function isLineMinimalCheckedCheckbox(line) {
+  return line.trim().startsWith('[x]')
+}
 
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
+function isLineClassicCheckedCheckbox(line) {
+  return line.trim().startsWith('[X]')
+}
 
-      <footer>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
-        </a>
-      </footer>
+function isLineCheckedCheckbox(line) {
+  return (
+    isLineMinimalCheckedCheckbox(line) || isLineClassicCheckedCheckbox(line)
+  )
+}
 
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
+function Line({ line, lineNum, dispatch }) {
+  let content
+  if (line.startsWith('//')) {
+    // ignore comments
+    return null
+  } else if (isLineEmptyCheckbox(line) || isLineCheckedCheckbox(line)) {
+    let checked = false
+    if (isLineCheckedCheckbox(line)) {
+      checked = true
+    }
+    content = (
+      <ControlledCheckbox
+        checked={checked}
+        onChange={(checked) =>
+          dispatch({
+            type: 'toggle-todo',
+            lineNum,
+          })
         }
+        label={line}
+      />
+    )
+  } else {
+    content = <Text forwardedAs="span">{line}</Text>
+  }
+  return (
+    <Fragment>
+      <Text forwardedAs="span" color="gray.3">
+        {lineNum}
+      </Text>{' '}
+      {content}
+      <br />
+    </Fragment>
+  )
+}
 
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
+function reducer(state, action) {
+  switch (action.type) {
+    case 'toggle-todo': {
+      let { lineNum } = action
+      return {
+        value: state.value
+          .split('\n')
+          .map((line, idx) => {
+            if (idx === lineNum - 1) {
+              if (isLineEmptyCheckbox(line)) {
+                // [] todo item
+                if (isLineMinimalEmptyCheckbox(line)) {
+                  return line.replace(/\[\]/, '[x]')
+                } else {
+                  // [ ] todo item
+                  return line.replace(/\[ \]/, '[x]')
+                }
+              } else if (isLineCheckedCheckbox(line)) {
+                // [x] todo item
+                if (isLineMinimalCheckedCheckbox(line)) {
+                  return line.replace(/\[\x]/, '[]')
+                } else {
+                  // [X] todo item
+                  return line.replace(/\[X\]/, '[]')
+                }
+              }
+            }
+            return line
+          })
+          .join('\n'),
+      }
+    }
+    case 'change': {
+      return {
+        value: action.value,
+      }
+    }
+  }
+}
 
-        footer {
-          width: 100%;
-          height: 100px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
+export default function Notedo() {
+  let [state, dispatch] = useReducer(reducer, { value: 'Type some more here' })
 
-        footer img {
-          margin-left: 0.5rem;
-        }
+  let lines = state.value.split('\n')
 
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        .title a {
-          color: #0070f3;
-          text-decoration: none;
-        }
-
-        .title a:hover,
-        .title a:focus,
-        .title a:active {
-          text-decoration: underline;
-        }
-
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 4rem;
-        }
-
-        .title,
-        .description {
-          text-align: center;
-        }
-
-        .description {
-          line-height: 1.5;
-          font-size: 1.5rem;
-        }
-
-        code {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        .card {
-          margin: 1rem;
-          flex-basis: 45%;
-          padding: 1.5rem;
-          text-align: left;
-          color: inherit;
-          text-decoration: none;
-          border: 1px solid #eaeaea;
-          border-radius: 10px;
-          transition: color 0.15s ease, border-color 0.15s ease;
-        }
-
-        .card:hover,
-        .card:focus,
-        .card:active {
-          color: #0070f3;
-          border-color: #0070f3;
-        }
-
-        .card h3 {
-          margin: 0 0 1rem 0;
-          font-size: 1.5rem;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 1.25rem;
-          line-height: 1.5;
-        }
-
-        .logo {
-          height: 1em;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
+  return (
+    <Box display="grid" gridTemplateColumns="1fr 1fr">
+      <Box>
+        <Textarea
+          value={state.value}
+          onChange={(val) => dispatch({ type: 'change', value: val })}
+        />
+      </Box>
+      <Box forwardedAs="pre">
+        {lines.map((line, idx) => {
+          return (
+            <Line line={line} key={idx} lineNum={idx + 1} dispatch={dispatch} />
+          )
+        })}
+      </Box>
+    </Box>
   )
 }

@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }) {
     <ThemeProvider>
       <Head>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <title>Title</title>
+        <title>Notedo</title>
       </Head>
       <Component {...pageProps} />
     </ThemeProvider>

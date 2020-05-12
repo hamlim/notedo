@@ -1,6 +1,6 @@
-# Template Next.js App
+# Notedo
 
-This repo acts as a template repo for some of my Next.js applications.
+A plaintext todo application - maybe
 
 ## Getting Started:
 
@@ -9,7 +9,7 @@ yarn
 ```
 
 ```sh
-yarn start
+yarn dev
 ```
 
 ## Deploying:
