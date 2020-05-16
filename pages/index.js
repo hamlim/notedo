@@ -5,7 +5,11 @@ import {
   Text,
   HiddenCheckbox,
   Label,
+  Button,
+  H1,
+  Stack,
 } from '@matthamlin/component-library'
+import Link from '../components/Link'
 
 let { useState, Fragment, useReducer } = React
 
@@ -133,12 +137,30 @@ export default function Notedo() {
   let lines = state.value.split('\n')
 
   return (
-    <Box display="grid" gridTemplateColumns="1fr 1fr">
+    <Box
+      display="grid"
+      gridTemplateColumns="1fr 1fr"
+      gridTemplateRows="50px 1fr"
+      style={{ '--header-height': '50px' }}
+    >
+      <Box
+        gridColumn="1 / 3"
+        display="flex"
+        alignItems="center"
+        px={4}
+        justifyContent="space-between"
+      >
+        <H1 fontSize={3}>Notedo</H1>
+        <Stack inline props={{ px: 2 }} alignItems="center">
+          <Link to="/about">About</Link>
+          <Button>Action</Button>
+        </Stack>
+      </Box>
       <Box>
         <Textarea
           value={state.value}
           onChange={(val) => dispatch({ type: 'change', value: val })}
-          minHeight="100vh"
+          minHeight="calc(100vh - var(--header-height))"
         />
       </Box>
       <Box forwardedAs="pre">
