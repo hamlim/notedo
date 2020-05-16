@@ -4,7 +4,7 @@ import RouterLink from 'next/link'
 
 export default function Link({ to, ...props }) {
   return (
-    <RouterLink href={to}>
+    <RouterLink href={to} passHref>
       <StyledLink forwardedAs="a" {...props} />
     </RouterLink>
   )
