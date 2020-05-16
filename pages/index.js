@@ -10,6 +10,7 @@ import {
   Stack,
 } from '@matthamlin/component-library'
 import Link from '../components/Link'
+import { get } from '../hooks/localStorage'
 
 let { useState, Fragment, useReducer } = React
 
@@ -55,7 +56,7 @@ function isLineCheckedCheckbox(line) {
   )
 }
 
-function Line({ line, lineNum, dispatch }) {
+function Line({ line, lineNum, dispatch, settings }) {
   let content
   if (line.startsWith('//')) {
     // ignore comments
@@ -78,13 +79,17 @@ function Line({ line, lineNum, dispatch }) {
       />
     )
   } else {
+    // @TODO handle links, bold, emphasis, tags, metadata
     content = <Text forwardedAs="span">{line}</Text>
   }
   return (
     <Fragment>
-      <Text forwardedAs="span" color="gray.3">
-        {lineNum}
-      </Text>{' '}
+      {settings?.showLineNums ? (
+        <Text forwardedAs="span" color="gray.3">
+          {lineNum}
+        </Text>
+      ) : null}
+
       {content}
       <br />
     </Fragment>
@@ -132,9 +137,14 @@ function reducer(state, action) {
 }
 
 export default function Notedo() {
-  let [state, dispatch] = useReducer(reducer, { value: 'Type some more here' })
+  let [settings, setSettings] = useState(get)
+  let [state, dispatch] = useReducer(reducer, { value: 'Type some notes here' })
 
   let lines = state.value.split('\n')
+
+  React.useEffect(() => {
+    setSettings(get)
+  }, [])
 
   return (
     <Box
@@ -153,7 +163,8 @@ export default function Notedo() {
         <H1 fontSize={3}>Notedo</H1>
         <Stack inline props={{ px: 2 }} alignItems="center">
           <Link to="/about">About</Link>
-          <Button>Action</Button>
+          <Link to="/settings">Settings</Link>
+          <Button>Export</Button>
         </Stack>
       </Box>
       <Box>
@@ -166,7 +177,13 @@ export default function Notedo() {
       <Box forwardedAs="pre">
         {lines.map((line, idx) => {
           return (
-            <Line line={line} key={idx} lineNum={idx + 1} dispatch={dispatch} />
+            <Line
+              settings={settings}
+              line={line}
+              key={idx}
+              lineNum={idx + 1}
+              dispatch={dispatch}
+            />
           )
         })}
       </Box>

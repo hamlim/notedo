@@ -13,7 +13,7 @@ export default function About() {
         justifyContent="space-between"
       >
         <H1 fontSize={3}>About Notedo</H1>
-        <Link to="/">Back</Link>
+        <Link to="/">Home</Link>
       </Box>
 
       <Stack props={{ my: 2 }} flexDirection="column">
