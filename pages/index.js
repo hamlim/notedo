@@ -38,7 +38,46 @@ function isLineCheckedCheckbox(line) {
   return line.trim().startsWith('[x]')
 }
 
-function Lines({ lines, dispatch, settings }) {
+function reducer(state, action) {
+  switch (action.type) {
+    case 'toggle-todo': {
+      let { lineNum } = action
+      return {
+        value: state.value
+          .split('\n')
+          .map((line, idx) => {
+            if (idx === lineNum - 1) {
+              if (isLineEmptyCheckbox(line)) {
+                // [ ] todo item
+                return line.replace(/\[ \]/, '[x]')
+              } else if (isLineCheckedCheckbox(line)) {
+                // [x] todo item
+                return line.replace(/\[\x]/, '[ ]')
+              }
+            }
+            return line
+          })
+          .join('\n'),
+      }
+    }
+    case 'change': {
+      return {
+        value: action.value,
+      }
+    }
+  }
+}
+
+export default function Notedo() {
+  let [{ settings }, setSettings] = useState(get)
+  let [state, dispatch] = useReducer(reducer, { value: 'Type some notes here' })
+
+  let lines = state.value.split('\n')
+
+  React.useEffect(() => {
+    setSettings(get)
+  }, [])
+
   let content = []
 
   let isInDetails = false
@@ -100,11 +139,13 @@ function Lines({ lines, dispatch, settings }) {
       content.push({
         content: (
           <Fragment>
-            {preBold.length && <Text forwardedAs="span">{preBold}</Text>}
+            {preBold.length ? <Text forwardedAs="span">{preBold}</Text> : null}
             <Text forwardedAs="strong" fontWeight="bold">
               {boldedContent}
             </Text>
-            {postBold.length && <Text forwardedAs="span">{postBold}</Text>}
+            {postBold.length ? (
+              <Text forwardedAs="span">{postBold}</Text>
+            ) : null}
           </Fragment>
         ),
         lineNum,
@@ -116,102 +157,27 @@ function Lines({ lines, dispatch, settings }) {
       content.push({
         content: (
           <Fragment>
-            {preItalics.length && <Text forwardedAs="span">{preItalics}</Text>}
+            {preItalics.length ? (
+              <Text forwardedAs="span">{preItalics}</Text>
+            ) : null}
             <Text forwardedAs="em" fontStyle="italics">
               {italicContent}
             </Text>
-            {postItalics.length && (
+            {postItalics.length ? (
               <Text forwardedAs="span">{postItalics}</Text>
-            )}
+            ) : null}
           </Fragment>
         ),
         lineNum,
       })
     } else {
-      // @TODO handle links, bold, emphasis, tags, metadata
+      // @TODO handle links, tags, metadata
       content.push({
         content: <Text forwardedAs="span">{line}</Text>,
         lineNum,
       })
     }
   }
-  return content.map(({ content, lineNum, isDetails = false }) => {
-    if (isDetails) {
-      return (
-        <Fragment key={lineNum}>
-          <details>
-            <summary>{content.summary}</summary>
-            {content.content.map(({ content, lineNum }) => (
-              <Fragment key={lineNum}>
-                {settings?.showLineNums ? (
-                  <Text forwardedAs="span" color="gray.3">
-                    {lineNum}
-                  </Text>
-                ) : null}
-
-                {content}
-                <br />
-              </Fragment>
-            ))}
-          </details>
-          <br />
-        </Fragment>
-      )
-    }
-    return (
-      <Fragment key={lineNum}>
-        {settings?.showLineNums ? (
-          <Text forwardedAs="span" color="gray.3">
-            {lineNum}
-          </Text>
-        ) : null}
-
-        {content}
-        <br />
-      </Fragment>
-    )
-  })
-}
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'toggle-todo': {
-      let { lineNum } = action
-      return {
-        value: state.value
-          .split('\n')
-          .map((line, idx) => {
-            if (idx === lineNum - 1) {
-              if (isLineEmptyCheckbox(line)) {
-                // [ ] todo item
-                return line.replace(/\[ \]/, '[x]')
-              } else if (isLineCheckedCheckbox(line)) {
-                // [x] todo item
-                return line.replace(/\[\x]/, '[ ]')
-              }
-            }
-            return line
-          })
-          .join('\n'),
-      }
-    }
-    case 'change': {
-      return {
-        value: action.value,
-      }
-    }
-  }
-}
-
-export default function Notedo() {
-  let [settings, setSettings] = useState(get)
-  let [state, dispatch] = useReducer(reducer, { value: 'Type some notes here' })
-
-  let lines = state.value.split('\n')
-
-  React.useEffect(() => {
-    setSettings(get)
-  }, [])
 
   return (
     <Box
@@ -243,7 +209,47 @@ export default function Notedo() {
         />
       </Box>
       <Box forwardedAs="pre">
-        <Lines lines={lines} settings={settings} dispatch={dispatch} />
+        {content.map(({ content, lineNum, isDetails = false }) => {
+          if (isDetails) {
+            return (
+              <Fragment key={lineNum}>
+                {settings?.showLineNums ? (
+                  <Text forwardedAs="span" color="gray.3">
+                    {lineNum < 10 ? `0${lineNum}` : lineNum}
+                  </Text>
+                ) : null}
+                <Box forwardedAs="details" display="inline-block">
+                  <summary>{content.summary}</summary>
+                  {content.content.map(({ content, lineNum }) => (
+                    <Fragment key={lineNum}>
+                      {settings?.showLineNums ? (
+                        <Text forwardedAs="span" color="gray.3">
+                          {lineNum < 10 ? `0${lineNum}` : lineNum}
+                        </Text>
+                      ) : null}
+
+                      {content}
+                      <br />
+                    </Fragment>
+                  ))}
+                </Box>
+                <br />
+              </Fragment>
+            )
+          }
+          return (
+            <Fragment key={lineNum}>
+              {settings?.showLineNums ? (
+                <Text forwardedAs="span" color="gray.3">
+                  {lineNum < 10 ? `0${lineNum}` : lineNum}
+                </Text>
+              ) : null}
+
+              {content}
+              <br />
+            </Fragment>
+          )
+        })}
       </Box>
     </Box>
   )
