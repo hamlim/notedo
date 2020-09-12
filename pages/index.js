@@ -4,11 +4,10 @@ import {
   Textarea,
   Text,
   Checkbox,
-  Label,
   Button,
-  H1,
+  Heading,
   Stack,
-} from '@matthamlin/component-library'
+} from '@ds-pack/components'
 import Link from '../components/Link'
 import { get } from '../hooks/localStorage'
 
@@ -16,10 +15,9 @@ let { useState, Fragment, useReducer } = React
 
 function ControlledCheckbox({ label, checked, onChange }) {
   return (
-    <Label display="inline-flex">
-      <Checkbox checked={checked} onChange={onChange} />
+    <Checkbox display="inline-flex" checked={checked} onChange={onChange}>
       {label}
-    </Label>
+    </Checkbox>
   )
 }
 
@@ -193,7 +191,9 @@ export default function Notedo() {
         px={4}
         justifyContent="space-between"
       >
-        <H1 fontSize={3}>Notedo</H1>
+        <Heading variant="h2" is="h1">
+          Notedo
+        </Heading>
         <Stack inline props={{ px: 2 }} alignItems="center">
           <Link to="/about">About</Link>
           <Link to="/settings">Settings</Link>

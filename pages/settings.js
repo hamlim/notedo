@@ -1,12 +1,5 @@
 import * as React from 'react'
-import {
-  H3,
-  Box,
-  H1,
-  Checkbox,
-  Label,
-  Button,
-} from '@matthamlin/component-library'
+import { Box, Heading, Checkbox, Button, Tapable } from '@ds-pack/components'
 import Link from '../components/Link'
 import { set } from '../hooks/localStorage'
 
@@ -27,19 +20,28 @@ export default function Settings() {
         px={4}
         justifyContent="space-between"
       >
-        <H1 fontSize={3}>Notedo Settings:</H1>
+        <Heading is="h1" variant="subhead">
+          Notedo Settings:
+        </Heading>
         <Link to="/">Home</Link>
       </Box>
 
       <Box mt={6}>
-        <H3>Preview Settings:</H3>
+        <Heading is="h3" variant="h3">
+          Preview Settings:
+        </Heading>
 
-        <Label display="flex">
-          Show line numbers in the preview:
-          <Checkbox checked={showLineNums} onChange={setShowLineNums} />
-        </Label>
+        <Checkbox
+          display="flex"
+          checked={showLineNums}
+          onChange={setShowLineNums}
+        >
+          Show line numbers in the preview
+        </Checkbox>
         <Box display="flex" alignItems="center" justifyContent="flex-end">
-          <Button onTap={saveSettings}>Save</Button>
+          <Button is={Tapable} onClick={saveSettings}>
+            Save
+          </Button>
         </Box>
       </Box>
     </Box>

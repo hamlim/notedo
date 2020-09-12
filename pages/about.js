@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { H3, Box, Text, H1, Stack } from '@matthamlin/component-library'
+import { Heading, Box, Text, Stack } from '@ds-pack/components'
 import Link from '../components/Link'
 
 export default function About() {
@@ -12,7 +12,9 @@ export default function About() {
         px={4}
         justifyContent="space-between"
       >
-        <H1 fontSize={3}>About Notedo</H1>
+        <Heading is="h1" variant="subhead">
+          About Notedo
+        </Heading>
         <Link to="/">Home</Link>
       </Box>
 
@@ -21,7 +23,9 @@ export default function About() {
           Notedo is a work in progress note taking and todo application all in
           one.
         </Text>
-        <H3>Shortcuts:</H3>
+        <Heading is="h3" variant="h3">
+          Shortcuts:
+        </Heading>
         <Text fontWeight="bold">Todo:</Text>
         <Text>
           To create a new todo item, you can type <kbd>[ ]</kbd> (or{' '}
