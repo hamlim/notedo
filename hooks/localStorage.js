@@ -6,7 +6,7 @@ export function set(value) {
 
 export function get() {
   try {
-    return JSON.parse(window.localStorage.getItem(currentKey))
+    return JSON.parse(window.localStorage.getItem(currentKey)) || {}
   } catch (err) {
     return {}
   }
