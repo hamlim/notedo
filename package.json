@@ -13,7 +13,6 @@
     "@babel/runtime": "^7.9.6",
     "@ds-pack/components": "^0.0.0-alpha.37",
     "@ds-pack/property-controls": "^0.0.3",
-    "@matthamlin/component-library": "^3.3.0",
     "@mdx-js/loader": "^1.6.1",
     "@mdx-js/react": "^1.6.1",
     "@next/mdx": "^9.3.6",
