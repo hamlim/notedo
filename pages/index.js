@@ -1,17 +1,14 @@
-import * as React from 'react'
+import { useState, Fragment, useReducer, useEffect } from 'react'
 import {
   Box,
   Textarea,
   Text,
   Checkbox,
-  Button,
   Heading,
   Stack,
 } from '@ds-pack/components'
 import Link from '../components/Link'
 import { get } from '../hooks/localStorage'
-
-let { useState, Fragment, useReducer } = React
 
 function ControlledCheckbox({ label, checked, onChange }) {
   return (
@@ -67,12 +64,12 @@ function reducer(state, action) {
 }
 
 export default function Notedo() {
-  let [{ settings }, setSettings] = useState(get)
+  let [{ settings }, setSettings] = useState({ settings: null })
   let [state, dispatch] = useReducer(reducer, { value: 'Type some notes here' })
 
   let lines = state.value.split('\n')
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSettings(get)
   }, [])
 
@@ -81,9 +78,13 @@ export default function Notedo() {
   let isInDetails = false
   let detailsLineNum = null
   let details = []
+  let commentCount = 0
   for (let idx in lines) {
-    let lineNum = Number(idx) + 1
     let line = lines[idx]
+    if (line.startsWith('//')) {
+      commentCount += 1
+    }
+    let lineNum = Number(idx) + 1 - commentCount
     if (line.startsWith('>>')) {
       isInDetails = true
       detailsLineNum = lineNum
@@ -93,7 +94,7 @@ export default function Notedo() {
       })
     } else if (isInDetails && line.startsWith('  ')) {
       details[details.length - 1].content.push({
-        content: <Text forwardedAs="span">{line}</Text>,
+        content: <Text is="span">{line}</Text>,
         lineNum,
       })
     } else if (isInDetails && !line.startsWith('  ')) {
@@ -105,7 +106,7 @@ export default function Notedo() {
       })
       // also push any content in the line
       content.push({
-        content: <Text forwardedAs="span">{line}</Text>,
+        content: <Text is="span">{line}</Text>,
         lineNum,
       })
     } else if (line.startsWith('//')) {
@@ -122,7 +123,7 @@ export default function Notedo() {
             onChange={() =>
               dispatch({
                 type: 'toggle-todo',
-                lineNum,
+                lineNum: Number(idx) + 1,
               })
             }
             label={line.replace('[ ]', '').replace('[x]', '')}
@@ -137,13 +138,11 @@ export default function Notedo() {
       content.push({
         content: (
           <Fragment>
-            {preBold.length ? <Text forwardedAs="span">{preBold}</Text> : null}
-            <Text forwardedAs="strong" fontWeight="bold">
+            {preBold.length ? <Text is="span">{preBold}</Text> : null}
+            <Text is="strong" fontWeight="bold">
               {boldedContent}
             </Text>
-            {postBold.length ? (
-              <Text forwardedAs="span">{postBold}</Text>
-            ) : null}
+            {postBold.length ? <Text is="span">{postBold}</Text> : null}
           </Fragment>
         ),
         lineNum,
@@ -155,15 +154,11 @@ export default function Notedo() {
       content.push({
         content: (
           <Fragment>
-            {preItalics.length ? (
-              <Text forwardedAs="span">{preItalics}</Text>
-            ) : null}
-            <Text forwardedAs="em" fontStyle="italics">
+            {preItalics.length ? <Text is="span">{preItalics}</Text> : null}
+            <Text is="em" fontStyle="italics">
               {italicContent}
             </Text>
-            {postItalics.length ? (
-              <Text forwardedAs="span">{postItalics}</Text>
-            ) : null}
+            {postItalics.length ? <Text is="span">{postItalics}</Text> : null}
           </Fragment>
         ),
         lineNum,
@@ -171,7 +166,7 @@ export default function Notedo() {
     } else {
       // @TODO handle links, tags, metadata
       content.push({
-        content: <Text forwardedAs="span">{line}</Text>,
+        content: <Text is="span">{line}</Text>,
         lineNum,
       })
     }
@@ -180,7 +175,7 @@ export default function Notedo() {
   return (
     <Box
       display="grid"
-      gridTemplateColumns="1fr 1fr"
+      gridTemplateColumns="50vw 50vw"
       gridTemplateRows="50px 1fr"
       style={{ '--header-height': '50px' }}
     >
@@ -197,7 +192,6 @@ export default function Notedo() {
         <Stack inline props={{ px: 2 }} alignItems="center">
           <Link to="/about">About</Link>
           <Link to="/settings">Settings</Link>
-          <Button>Export</Button>
         </Stack>
       </Box>
       <Box>
@@ -208,22 +202,22 @@ export default function Notedo() {
           minHeight="calc(100vh - var(--header-height))"
         />
       </Box>
-      <Box forwardedAs="pre">
+      <Box is="pre" style={{ whiteSpace: 'pre-line' }}>
         {content.map(({ content, lineNum, isDetails = false }) => {
           if (isDetails) {
             return (
               <Fragment key={lineNum}>
                 {settings?.showLineNums ? (
-                  <Text forwardedAs="span" color="gray.3">
+                  <Text is="span" color="$gray-4" pr="$2">
                     {lineNum < 10 ? `0${lineNum}` : lineNum}
                   </Text>
                 ) : null}
-                <Box forwardedAs="details" display="inline-block">
+                <Box is="details" display="inline-block">
                   <summary>{content.summary}</summary>
                   {content.content.map(({ content, lineNum }) => (
                     <Fragment key={lineNum}>
                       {settings?.showLineNums ? (
-                        <Text forwardedAs="span" color="gray.3">
+                        <Text is="span" color="$gray-4" pr="$2">
                           {lineNum < 10 ? `0${lineNum}` : lineNum}
                         </Text>
                       ) : null}
@@ -240,7 +234,7 @@ export default function Notedo() {
           return (
             <Fragment key={lineNum}>
               {settings?.showLineNums ? (
-                <Text forwardedAs="span" color="gray.3">
+                <Text is="span" color="$gray-4" pr="$2">
                   {lineNum < 10 ? `0${lineNum}` : lineNum}
                 </Text>
               ) : null}

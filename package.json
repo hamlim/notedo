@@ -11,26 +11,25 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.9.6",
-    "@ds-pack/components": "^0.0.0-alpha.37",
-    "@ds-pack/property-controls": "^0.0.3",
+    "@ds-pack/components": "*",
+    "@ds-pack/use-refs": "^1.0.0",
     "@mdx-js/loader": "^1.6.1",
     "@mdx-js/react": "^1.6.1",
-    "@next/mdx": "^9.3.6",
-    "next": "11.1.0",
+    "@next/mdx": "^11",
+    "nanopop": "^2",
+    "next": "^11",
     "react": "experimental",
     "react-dom": "experimental",
-    "styled-components": "^5.1.0"
+    "simple-props": "^0.5.0",
+    "styled-components": "^5"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.6",
-    "@babel/plugin-proposal-export-default-from": "^7.8.3",
-    "@babel/plugin-transform-runtime": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "@babel/preset-react": "^7.9.4",
-    "babel-plugin-styled-components": "^1.10.7"
-  },
-  "resolutions": {
-    "styled-components": "5.1.0"
+    "@babel/cli": "^7",
+    "@babel/core": "^7",
+    "@babel/plugin-proposal-export-default-from": "^7",
+    "@babel/plugin-transform-runtime": "^7",
+    "@babel/preset-env": "^7",
+    "@babel/preset-react": "^7",
+    "babel-plugin-styled-components": "^1"
   }
 }

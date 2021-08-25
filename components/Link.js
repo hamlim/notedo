@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Link as StyledLink } from '@ds-pack/components'
 import RouterLink from 'next/link'
 

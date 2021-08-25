@@ -4,6 +4,6 @@ module.exports = withMDX({
   experimental: {
     reactRefresh: true,
     modern: true,
-    reactMode: 'concurrent',
+    reactRoot: 'concurrent',
   },
 })

@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Heading, Box, Text, Stack } from '@ds-pack/components'
 import Link from '../components/Link'
 

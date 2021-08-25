@@ -1,9 +1,7 @@
-import * as React from 'react'
+import { useState } from 'react'
 import { Box, Heading, Checkbox, Button, Tapable } from '@ds-pack/components'
 import Link from '../components/Link'
 import { set } from '../hooks/localStorage'
-
-let { useState } = React
 
 export default function Settings() {
   let [showLineNums, setShowLineNums] = useState(true)
