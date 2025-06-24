@@ -10,7 +10,7 @@
     "deploy-prod": "now --prod"
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.6",
+    "@babel/runtime": "^7.26.10",
     "@ds-pack/components": "*",
     "@ds-pack/use-refs": "^1.0.0",
     "@mdx-js/loader": "^1.6.1",
